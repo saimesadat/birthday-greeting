@@ -1,0 +1,677 @@
+/* ==========================================================================
+   Birthday Greeting - Custom Webpage
+   Aesthetic: Twilight Florals & Botanical Elegance
+   Lilies (White, Violet-White) & White Roses surrounded by Violet Blossoms
+   ========================================================================== */
+
+:root {
+  --bg-deep: #0e0918;
+  --bg-card: rgba(254, 253, 250, 0.96);
+  --card-border-gold: #c5a059;
+  --card-border-subtle: rgba(197, 160, 89, 0.35);
+  --text-primary: #231b2d;
+  --text-muted: #5e546c;
+  --text-lead: #3a2d4c;
+  --violet-primary: #7e22ce;
+  --violet-deep: #581c87;
+  --violet-light: #e9d5ff;
+  --accent-gold: #d4af37;
+  --accent-gold-light: #fef08a;
+  --shadow-card: 0 25px 60px -15px rgba(10, 5, 20, 0.65), 0 0 30px rgba(126, 34, 206, 0.15);
+  --font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Montserrat', system-ui, -apple-system, sans-serif;
+  --font-lead: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 20%, #201335 0%, #110a1f 50%, #08040d 100%);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  position: relative;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Background Canvas for Falling Petals */
+#petals-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Top Navigation / Controls Bar */
+.top-bar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  background: rgba(14, 9, 24, 0.65);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(233, 213, 255, 0.12);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.brand-tag {
+  color: var(--violet-light);
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.brand-tag .sparkle {
+  color: var(--accent-gold);
+  animation: pulse-glow 2.5s infinite ease-in-out;
+}
+
+.controls-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(233, 213, 255, 0.25);
+  color: #f5f3ff;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+}
+
+.btn-pill:hover {
+  background: rgba(147, 51, 234, 0.25);
+  border-color: var(--violet-light);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+}
+
+.btn-pill:active {
+  transform: translateY(0);
+}
+
+.btn-pill.active {
+  background: linear-gradient(135deg, #7e22ce, #9333ea);
+  border-color: #c084fc;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+}
+
+/* Main Content Layout */
+.main-wrapper {
+  position: relative;
+  z-index: 5;
+  max-width: 960px;
+  margin: 2rem auto 4rem;
+  padding: 0 1.5rem;
+}
+
+/* Floral Garland Frame & Wreath */
+.floral-frame-container {
+  position: relative;
+  padding: 3rem 1.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.botanical-garland {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Individual Flower SVG Placement */
+.flower-item {
+  position: absolute;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.45));
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+/* Wreath Top Layer */
+.v-top-left { top: 0; left: 10%; width: 65px; height: 65px; transform: rotate(-25deg); }
+.v-top-midleft { top: -15px; left: 26%; width: 55px; height: 55px; transform: rotate(15deg); }
+.v-top-midright { top: -15px; right: 26%; width: 55px; height: 55px; transform: rotate(-10deg); }
+.v-top-right { top: 0; right: 10%; width: 65px; height: 65px; transform: rotate(25deg); }
+
+.leaf-tl { top: 10px; left: 18%; width: 60px; height: 50px; transform: rotate(40deg); }
+.leaf-tr { top: 10px; right: 18%; width: 60px; height: 50px; transform: rotate(-40deg) scaleX(-1); }
+
+/* Centerpiece Top Flowers (White Roses & Variegated Lilies) */
+.rose-left { top: -20px; left: 34%; width: 90px; height: 90px; transform: rotate(-12deg); }
+.lily-center { top: -38px; left: calc(50% - 60px); width: 120px; height: 120px; z-index: 3; }
+.lily-left-accent { top: -15px; left: 22%; width: 85px; height: 85px; transform: rotate(-35deg); }
+.rose-right { top: -20px; right: 34%; width: 90px; height: 90px; transform: rotate(15deg); }
+
+/* Side Surrounding Violets */
+.v-side-left-1 { top: 32%; left: -22px; width: 60px; height: 60px; transform: rotate(-45deg); }
+.v-side-left-2 { top: 62%; left: -20px; width: 58px; height: 58px; transform: rotate(-15deg); }
+.v-side-right-1 { top: 32%; right: -22px; width: 60px; height: 60px; transform: rotate(45deg); }
+.v-side-right-2 { top: 62%; right: -20px; width: 58px; height: 58px; transform: rotate(15deg); }
+
+/* Bottom Cluster */
+.v-bottom-left { bottom: 5px; left: 12%; width: 65px; height: 65px; transform: rotate(30deg); }
+.lily-bottom-left { bottom: -25px; left: 25%; width: 95px; height: 95px; transform: rotate(20deg); }
+.rose-bottom-center { bottom: -30px; left: calc(50% - 48px); width: 96px; height: 96px; z-index: 3; }
+.lily-bottom-right { bottom: -25px; right: 25%; width: 95px; height: 95px; transform: rotate(-25deg); }
+.v-bottom-right { bottom: 5px; right: 12%; width: 65px; height: 65px; transform: rotate(-30deg); }
+
+/* Gentle hover interaction on flowers */
+.floral-frame-container:hover .flower-item {
+  transform: scale(1.04);
+}
+
+/* Greeting Card Body */
+.greeting-card {
+  position: relative;
+  background: var(--bg-card);
+  border-radius: 24px;
+  padding: 4.5rem 3.5rem 3.5rem;
+  box-shadow: var(--shadow-card);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  animation: card-appear 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Golden Foil Border Inset */
+.card-foil-border {
+  position: absolute;
+  inset: 12px;
+  border: 1.5px solid var(--card-border-gold);
+  border-radius: 16px;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.card-foil-border::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 0.5px solid rgba(197, 160, 89, 0.35);
+  border-radius: 12px;
+}
+
+/* Card Header */
+.card-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.wreath-crest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.crest-line {
+  display: inline-block;
+  width: 45px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--card-border-gold), transparent);
+}
+
+.crest-flower {
+  font-size: 1.1rem;
+}
+
+.sub-greeting {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--violet-deep);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+.main-title {
+  font-family: var(--font-serif);
+  font-size: 2.75rem;
+  font-weight: 600;
+  color: #1a1028;
+  line-height: 1.2;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.01em;
+}
+
+.title-subtext {
+  font-family: var(--font-lead);
+  font-style: italic;
+  font-size: 1.25rem;
+  color: #6c5a82;
+}
+
+/* Recipient Badge */
+.recipient-badge-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.recipient-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(126, 34, 206, 0.06);
+  border: 1px dashed rgba(126, 34, 206, 0.35);
+  padding: 0.4rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.9rem;
+  color: var(--violet-deep);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recipient-badge:hover {
+  background: rgba(126, 34, 206, 0.12);
+  border-color: var(--violet-primary);
+}
+
+.for-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #7b6f8d;
+}
+
+.recipient-name {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #2e1065;
+  outline: none;
+  border-bottom: 1px transparent solid;
+}
+
+.recipient-name:focus {
+  border-bottom-color: var(--violet-primary);
+  background: #ffffff;
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+.edit-hint {
+  font-size: 0.8rem;
+  color: #9333ea;
+  opacity: 0.7;
+}
+
+/* Message Content */
+.message-content {
+  position: relative;
+  z-index: 2;
+  max-width: 660px;
+  margin: 0 auto 3rem;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.quote-mark {
+  font-family: var(--font-serif);
+  font-size: 3.5rem;
+  line-height: 1;
+  color: var(--accent-gold);
+  opacity: 0.4;
+  user-select: none;
+}
+
+.quote-mark.open {
+  margin-bottom: -1.5rem;
+}
+
+.quote-mark.close {
+  margin-top: 0.5rem;
+  margin-bottom: -1rem;
+}
+
+.lead-statement {
+  font-family: var(--font-lead);
+  font-size: 1.85rem;
+  line-height: 1.35;
+  color: #2a1542;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.body-paragraph {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #3f364d;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+.body-paragraph.emphasis {
+  font-weight: 500;
+  color: #2d1d42;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(90deg, transparent, rgba(233, 213, 255, 0.3), transparent);
+  border-radius: 8px;
+}
+
+.closing-wish {
+  font-family: var(--font-lead);
+  font-size: 1.45rem;
+  line-height: 1.5;
+  color: #4a1d96;
+  font-weight: 600;
+  margin-top: 1.5rem;
+}
+
+/* Card Footer & Wax Seal */
+.card-footer {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  border-top: 1px solid rgba(197, 160, 89, 0.25);
+  padding-top: 2rem;
+}
+
+.wax-seal {
+  width: 58px;
+  height: 58px;
+  background: radial-gradient(circle at 35% 30%, #a855f7 0%, #6b21a8 60%, #3b0764 100%);
+  border-radius: 50%;
+  box-shadow: 0 6px 16px rgba(59, 7, 100, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid rgba(254, 240, 138, 0.4);
+}
+
+.wax-seal:hover {
+  transform: scale(1.12) rotate(6deg);
+  box-shadow: 0 8px 22px rgba(126, 34, 206, 0.55), inset 0 2px 6px rgba(255, 255, 255, 0.6);
+}
+
+.wax-seal:active {
+  transform: scale(0.96);
+}
+
+.seal-inner {
+  text-align: center;
+  color: #fef08a;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.seal-emblem {
+  font-size: 1rem;
+  display: block;
+}
+
+.seal-caption {
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  display: block;
+}
+
+.signature-line {
+  text-align: center;
+}
+
+.sign-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: #6c5a82;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.sign-note {
+  font-family: var(--font-lead);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: #241438;
+}
+
+.card-share-box {
+  margin-top: 1rem;
+}
+
+.share-main-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: linear-gradient(135deg, #7e22ce, #9333ea);
+  color: #ffffff;
+  border: 1px solid #c084fc;
+  padding: 0.65rem 1.75rem;
+  border-radius: 9999px;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(126, 34, 206, 0.35);
+  transition: all 0.25s ease;
+}
+
+.share-main-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(147, 51, 234, 0.5);
+  background: linear-gradient(135deg, #9333ea, #a855f7);
+}
+
+.share-main-btn:active {
+  transform: translateY(0);
+}
+
+/* Botanical Meaning Section */
+.botanical-meaning-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(233, 213, 255, 0.15);
+  border-radius: 20px;
+  padding: 2.5rem;
+  color: #f5f3ff;
+}
+
+.section-heading {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 500;
+  text-align: center;
+  color: var(--violet-light);
+  margin-bottom: 2rem;
+  letter-spacing: 0.02em;
+}
+
+.meaning-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.meaning-item {
+  background: rgba(14, 9, 24, 0.45);
+  border: 1px solid rgba(233, 213, 255, 0.1);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.meaning-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(192, 132, 252, 0.4);
+}
+
+.flower-icon-wrap {
+  width: 58px;
+  height: 58px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.meaning-text h3 {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: #ffffff;
+  margin-bottom: 0.4rem;
+}
+
+.meaning-text p {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+}
+
+/* Toast Message */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #1e1133;
+  color: #ffffff;
+  padding: 0.75rem 1.75rem;
+  border-radius: 9999px;
+  border: 1px solid #a855f7;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* Animations */
+@keyframes card-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .top-bar {
+    padding: 1rem;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .controls-group {
+    justify-content: center;
+  }
+
+  .floral-frame-container {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .greeting-card {
+    padding: 3rem 1.5rem 2rem;
+  }
+
+  .main-title {
+    font-size: 2rem;
+  }
+
+  .lead-statement {
+    font-size: 1.4rem;
+  }
+
+  .body-paragraph {
+    font-size: 0.95rem;
+  }
+
+  /* Flower scaling on mobile to keep balance */
+  .rose-left, .rose-right { width: 60px; height: 60px; }
+  .lily-center { width: 85px; height: 85px; left: calc(50% - 42px); top: -25px; }
+  .lily-left-accent { display: none; }
+  .v-top-midleft, .v-top-midright { display: none; }
+  .v-side-left-1, .v-side-left-2, .v-side-right-1, .v-side-right-2 { display: none; }
+  .lily-bottom-left, .lily-bottom-right { width: 65px; height: 65px; }
+  .rose-bottom-center { width: 70px; height: 70px; left: calc(50% - 35px); }
+}
+
+/* Print Friendly Styles */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  .top-bar, #petals-canvas, .botanical-meaning-card, .toast {
+    display: none !important;
+  }
+
+  .greeting-card {
+    box-shadow: none !important;
+    border: 2px solid #c5a059 !important;
+  }
+}

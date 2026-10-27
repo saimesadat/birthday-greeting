@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday | A Celebration of You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Falling Petals Canvas -->
+  <canvas id="petals-canvas"></canvas>
+
+  <!-- SVG Flower Definitions -->
+  <svg class="svg-definitions" style="display: none;" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Gradients for White Rose -->
+      <linearGradient id="rose-petal-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#FFFFFF" />
+        <stop offset="60%" stop-color="#F5F3EF" />
+        <stop offset="100%" stop-color="#E2DDD5" />
+      </linearGradient>
+      <linearGradient id="rose-petal-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#FFFFFF" />
+        <stop offset="70%" stop-color="#F0EDE8" />
+        <stop offset="100%" stop-color="#D9D3C7" />
+      </linearGradient>
+      <radialGradient id="rose-core-glow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FFFDF7" />
+        <stop offset="50%" stop-color="#F7F3E9" />
+        <stop offset="100%" stop-color="#E5DDD0" />
+      </radialGradient>
+
+      <!-- Gradients for White Lily -->
+      <linearGradient id="white-lily-petal" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#FFFFFF" />
+        <stop offset="75%" stop-color="#F8FAF8" />
+        <stop offset="100%" stop-color="#DDE8DC" />
+      </linearGradient>
+      <radialGradient id="lily-throat-green" cx="50%" cy="80%" r="50%">
+        <stop offset="0%" stop-color="#C2E6C4" />
+        <stop offset="60%" stop-color="#EBF7EC" />
+        <stop offset="100%" stop-color="#FFFFFF" />
+      </radialGradient>
+
+      <!-- Gradients for Violet & White Mixed Lily -->
+      <linearGradient id="bicolor-lily-petal" x1="50%" y1="100%" x2="50%" y2="0%">
+        <stop offset="0%" stop-color="#EAF5EB" />
+        <stop offset="35%" stop-color="#FFFFFF" />
+        <stop offset="70%" stop-color="#E9D5FF" />
+        <stop offset="90%" stop-color="#C084FC" />
+        <stop offset="100%" stop-color="#9333EA" />
+      </linearGradient>
+      <linearGradient id="bicolor-rim-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#A855F7" />
+        <stop offset="50%" stop-color="#FFFFFF" />
+        <stop offset="100%" stop-color="#7E22CE" />
+      </linearGradient>
+
+      <!-- Gradients for Surrounding Violet Flowers -->
+      <linearGradient id="violet-petal-top" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#9333EA" />
+        <stop offset="50%" stop-color="#7E22CE" />
+        <stop offset="100%" stop-color="#581C87" />
+      </linearGradient>
+      <linearGradient id="violet-petal-bottom" x1="0%" y1="100%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#A855F7" />
+        <stop offset="50%" stop-color="#6B21A8" />
+        <stop offset="100%" stop-color="#4C1D95" />
+      </linearGradient>
+      <radialGradient id="violet-center-eye" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#FEF08A" />
+        <stop offset="60%" stop-color="#EAB308" />
+        <stop offset="100%" stop-color="#854D0E" />
+      </radialGradient>
+
+      <!-- Leaf Gradients -->
+      <linearGradient id="leaf-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#4D7C0F" />
+        <stop offset="60%" stop-color="#365314" />
+        <stop offset="100%" stop-color="#1E3A1A" />
+      </linearGradient>
+      <linearGradient id="leaf-accent" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#65A30D" />
+        <stop offset="100%" stop-color="#3F6212" />
+      </linearGradient>
+
+      <!-- Drop Shadows -->
+      <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+        <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#1B1229" flood-opacity="0.35"/>
+      </filter>
+      <filter id="bloom-glow" x="-30%" y="-30%" width="160%" height="160%">
+        <feGaussianBlur stdDeviation="3" result="blur" />
+        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      </filter>
+
+      <!-- Symbol: White Rose -->
+      <g id="symbol-white-rose">
+        <g filter="url(#soft-shadow)">
+          <!-- Outer Petals -->
+          <path d="M50 15 C30 15 15 35 15 55 C15 78 35 90 55 90 C78 90 92 72 90 50 C88 28 70 15 50 15 Z" fill="url(#rose-petal-grad-1)" />
+          <path d="M22 45 C15 25 35 10 52 12 C70 14 85 28 85 45 C85 68 65 85 45 85 C25 85 22 65 22 45 Z" fill="url(#rose-petal-grad-2)" opacity="0.95" />
+          <path d="M30 65 C20 48 30 25 50 22 C72 19 82 40 78 60 C74 76 50 82 30 65 Z" fill="#FBF9F5" />
+          <!-- Mid Layers -->
+          <path d="M35 32 C45 20 62 20 70 32 C78 44 72 60 60 65 C48 70 30 60 35 32 Z" fill="url(#rose-petal-grad-1)" />
+          <path d="M40 38 C48 28 60 30 64 40 C68 50 60 60 50 58 C40 56 36 46 40 38 Z" fill="#FFFFFF" />
+          <!-- Inner Bud -->
+          <ellipse cx="50" cy="46" rx="9" ry="8" fill="url(#rose-core-glow)" />
+          <path d="M47 43 C49 40 53 40 55 43 C57 46 54 49 51 49 C48 49 46 46 47 43 Z" fill="#ECE5D8" />
+          <path d="M49 44 C51 43 53 43 54 45" stroke="#C5BCAB" stroke-width="0.8" fill="none" />
+        </g>
+      </g>
+
+      <!-- Symbol: White Lily -->
+      <g id="symbol-white-lily">
+        <g filter="url(#soft-shadow)">
+          <!-- Petals radiating in 6 directions -->
+          <!-- Top Petal -->
+          <path d="M50 55 C40 40 42 15 50 2 C58 15 60 40 50 55 Z" fill="url(#white-lily-petal)" />
+          <path d="M50 50 L50 10" stroke="#C8DEC9" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+          <!-- Top Left -->
+          <path d="M50 55 C35 48 10 32 3 20 C18 20 40 40 50 55 Z" fill="url(#white-lily-petal)" />
+          <!-- Top Right -->
+          <path d="M50 55 C65 48 90 32 97 20 C82 20 60 40 50 55 Z" fill="url(#white-lily-petal)" />
+          <!-- Bottom Left -->
+          <path d="M50 55 C35 60 12 70 5 88 C18 80 40 65 50 55 Z" fill="url(#white-lily-petal)" />
+          <!-- Bottom Right -->
+          <path d="M50 55 C65 60 88 70 95 88 C82 80 60 65 50 55 Z" fill="url(#white-lily-petal)" />
+          <!-- Bottom Center -->
+          <path d="M50 55 C42 68 44 88 50 98 C56 88 58 68 50 55 Z" fill="url(#white-lily-petal)" />
+          <!-- Throat Green Glow -->
+          <circle cx="50" cy="55" r="14" fill="url(#lily-throat-green)" />
+          <!-- Filaments and Anthers -->
+          <path d="M50 55 Q42 42 36 32" stroke="#84CC16" stroke-width="1" fill="none" />
+          <ellipse cx="36" cy="32" rx="3.5" ry="1.5" fill="#D97706" transform="rotate(-30 36 32)" />
+          <path d="M50 55 Q58 42 64 32" stroke="#84CC16" stroke-width="1" fill="none" />
+          <ellipse cx="64" cy="32" rx="3.5" ry="1.5" fill="#D97706" transform="rotate(30 64 32)" />
+          <path d="M50 55 Q48 38 50 28" stroke="#84CC16" stroke-width="1" fill="none" />
+          <ellipse cx="50" cy="28" rx="3.5" ry="1.5" fill="#D97706" />
+          <path d="M50 55 Q35 58 28 62" stroke="#84CC16" stroke-width="1" fill="none" />
+          <ellipse cx="28" cy="62" rx="3.5" ry="1.5" fill="#D97706" transform="rotate(45 28 62)" />
+          <path d="M50 55 Q65 58 72 62" stroke="#84CC16" stroke-width="1" fill="none" />
+          <ellipse cx="72" cy="62" rx="3.5" ry="1.5" fill="#D97706" transform="rotate(-45 72 62)" />
+          <!-- Pistil Center -->
+          <circle cx="50" cy="55" r="2.5" fill="#65A30D" />
+        </g>
+      </g>
+
+      <!-- Symbol: Violet & White Mixed Lily -->
+      <g id="symbol-bicolor-lily">
+        <g filter="url(#soft-shadow)">
+          <!-- 6 Radiating petals with violet gradient margins -->
+          <!-- Top Petal -->
+          <path d="M50 55 C38 38 40 12 50 0 C60 12 62 38 50 55 Z" fill="url(#bicolor-lily-petal)" stroke="#9333EA" stroke-width="0.75" />
+          <!-- Petal rib line -->
+          <path d="M50 52 L50 8" stroke="#C084FC" stroke-width="1" opacity="0.7" />
+          <!-- Top Left Petal -->
+          <path d="M50 55 C32 45 10 28 0 16 C16 16 38 38 50 55 Z" fill="url(#bicolor-lily-petal)" stroke="#9333EA" stroke-width="0.75" />
+          <!-- Top Right Petal -->
+          <path d="M50 55 C68 45 90 28 100 16 C84 16 62 38 50 55 Z" fill="url(#bicolor-lily-petal)" stroke="#9333EA" stroke-width="0.75" />
+          <!-- Bottom Left Petal -->
+          <path d="M50 55 C32 62 10 74 2 92 C16 84 38 68 50 55 Z" fill="url(#bicolor-lily-petal)" stroke="#9333EA" stroke-width="0.75" />
+          <!-- Bottom Right Petal -->
+          <path d="M50 55 C68 62 90 74 98 92 C84 84 62 68 50 55 Z" fill="url(#bicolor-lily-petal)" stroke="#9333EA" stroke-width="0.75" />
+          <!-- Bottom Center Petal -->
+          <path d="M50 55 C40 70 42 90 50 100 C58 90 60 70 50 55 Z" fill="url(#bicolor-lily-petal)" stroke="#9333EA" stroke-width="0.75" />
+          
+          <!-- Delicate violet freckles/spots radiating from center -->
+          <circle cx="48" cy="46" r="1.2" fill="#7E22CE" />
+          <circle cx="52" cy="45" r="1.1" fill="#6B21A8" />
+          <circle cx="46" cy="38" r="1" fill="#7E22CE" />
+          <circle cx="54" cy="37" r="0.9" fill="#9333EA" />
+          <circle cx="42" cy="46" r="1" fill="#7E22CE" />
+          <circle cx="58" cy="46" r="1.1" fill="#6B21A8" />
+          <circle cx="44" cy="58" r="1.2" fill="#7E22CE" />
+          <circle cx="56" cy="58" r="1" fill="#9333EA" />
+          <circle cx="48" cy="66" r="1.1" fill="#6B21A8" />
+          <circle cx="52" cy="65" r="0.9" fill="#7E22CE" />
+
+          <!-- Center Lime Stigma & Stamens -->
+          <circle cx="50" cy="55" r="10" fill="url(#lily-throat-green)" opacity="0.8" />
+          <path d="M50 55 Q42 42 35 30" stroke="#65A30D" stroke-width="1.2" fill="none" />
+          <ellipse cx="35" cy="30" rx="3.5" ry="1.5" fill="#E11D48" transform="rotate(-30 35 30)" />
+          <path d="M50 55 Q58 42 65 30" stroke="#65A30D" stroke-width="1.2" fill="none" />
+          <ellipse cx="65" cy="30" rx="3.5" ry="1.5" fill="#E11D48" transform="rotate(30 65 30)" />
+          <path d="M50 55 Q48 38 50 25" stroke="#65A30D" stroke-width="1.2" fill="none" />
+          <ellipse cx="50" cy="25" rx="3.5" ry="1.5" fill="#E11D48" />
+          <path d="M50 55 Q35 60 26 65" stroke="#65A30D" stroke-width="1.2" fill="none" />
+          <ellipse cx="26" cy="65" rx="3.5" ry="1.5" fill="#E11D48" transform="rotate(40 26 65)" />
+          <path d="M50 55 Q65 60 74 65" stroke="#65A30D" stroke-width="1.2" fill="none" />
+          <ellipse cx="74" cy="65" rx="3.5" ry="1.5" fill="#E11D48" transform="rotate(-40 74 65)" />
+          <circle cx="50" cy="55" r="2.8" fill="#4D7C0F" />
+        </g>
+      </g>
+
+      <!-- Symbol: Violet Flower (Surrounding floral) -->
+      <g id="symbol-violet-flower">
+        <g filter="url(#soft-shadow)">
+          <!-- 5 rounded petals -->
+          <!-- Top Left -->
+          <path d="M30 30 C15 15 25 2 38 12 C45 18 42 28 30 30 Z" fill="url(#violet-petal-top)" />
+          <!-- Top Right -->
+          <path d="M50 30 C65 15 55 2 42 12 C35 18 38 28 50 30 Z" fill="url(#violet-petal-top)" />
+          <!-- Mid Left -->
+          <path d="M28 35 C10 32 8 50 24 54 C32 56 34 45 28 35 Z" fill="url(#violet-petal-bottom)" />
+          <!-- Mid Right -->
+          <path d="M52 35 C70 32 72 50 56 54 C48 56 46 45 52 35 Z" fill="url(#violet-petal-bottom)" />
+          <!-- Bottom Lip Large Petal -->
+          <path d="M40 38 C26 42 28 68 40 68 C52 68 54 42 40 38 Z" fill="url(#violet-petal-bottom)" />
+          <path d="M40 40 C34 45 34 60 40 60 C46 60 46 45 40 40 Z" fill="#C084FC" opacity="0.5" />
+          <!-- Dark whiskers radiating from center -->
+          <path d="M40 38 L32 46" stroke="#3B0764" stroke-width="1" stroke-linecap="round" />
+          <path d="M40 38 L48 46" stroke="#3B0764" stroke-width="1" stroke-linecap="round" />
+          <path d="M40 38 L40 49" stroke="#3B0764" stroke-width="1.2" stroke-linecap="round" />
+          <path d="M40 38 L34 32" stroke="#3B0764" stroke-width="1" stroke-linecap="round" />
+          <path d="M40 38 L46 32" stroke="#3B0764" stroke-width="1" stroke-linecap="round" />
+          <!-- Golden Eye Center -->
+          <circle cx="40" cy="38" r="4.2" fill="url(#violet-center-eye)" />
+          <circle cx="39" cy="37" r="1.2" fill="#FFFFFF" opacity="0.9" />
+        </g>
+      </g>
+
+      <!-- Symbol: Botanical Leaf Cluster -->
+      <g id="symbol-leaves">
+        <path d="M20 50 C5 30 15 5 40 2 C45 25 35 45 20 50 Z" fill="url(#leaf-grad)" />
+        <path d="M20 50 Q28 26 40 2" stroke="#84CC16" stroke-width="0.8" fill="none" opacity="0.7" />
+        <path d="M25 45 C35 30 55 25 60 40 C50 55 35 55 25 45 Z" fill="url(#leaf-accent)" opacity="0.9" />
+      </g>
+    </defs>
+  </svg>
+
+  <!-- Top Action Bar (Controls & Music) -->
+  <header class="top-bar">
+    <div class="brand-tag">
+      <span class="sparkle">✦</span> Dedicated With Deep Respect
+    </div>
+    <div class="controls-group">
+      <button id="btn-share-link" class="btn-pill" title="Copy shareable link with personalization">
+        <span class="icon">🔗</span>
+        <span>Share Link</span>
+      </button>
+      <button id="btn-music" class="btn-pill" title="Toggle peaceful ambient melody">
+        <span class="icon" id="music-icon">🎵</span>
+        <span id="music-text">Play Melody</span>
+      </button>
+      <button id="btn-petals" class="btn-pill" title="Release floating petals">
+        <span class="icon">🌸</span>
+        <span>Celebrate</span>
+      </button>
+      <button id="btn-print" class="btn-pill" title="Print or save as keepsake">
+        <span class="icon">🖨️</span>
+        <span>Print Card</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+    <!-- Hero Botanical Wreath Frame -->
+    <div class="floral-frame-container">
+      
+      <!-- Surrounding Floral Garland (Lilies, Roses, and Violets) -->
+      <div class="botanical-garland" aria-hidden="true">
+        <!-- Surrounding Violet Clusters (Top & Corners) -->
+        <svg class="flower-item violet v-top-left" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+        <svg class="flower-item violet v-top-midleft" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+        <svg class="flower-item violet v-top-midright" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+        <svg class="flower-item violet v-top-right" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+
+        <!-- Lilies & Roses Core Bouquet Top -->
+        <svg class="flower-item leaves leaf-tl" viewBox="0 0 70 60"><use href="#symbol-leaves"/></svg>
+        <svg class="flower-item white-rose rose-left" viewBox="0 0 100 100"><use href="#symbol-white-rose"/></svg>
+        <svg class="flower-item bicolor-lily lily-center" viewBox="0 0 100 100"><use href="#symbol-bicolor-lily"/></svg>
+        <svg class="flower-item white-lily lily-left-accent" viewBox="0 0 100 100"><use href="#symbol-white-lily"/></svg>
+        <svg class="flower-item white-rose rose-right" viewBox="0 0 100 100"><use href="#symbol-white-rose"/></svg>
+        <svg class="flower-item leaves leaf-tr" viewBox="0 0 70 60"><use href="#symbol-leaves"/></svg>
+
+        <!-- Surrounding Violets Framing Sides -->
+        <svg class="flower-item violet v-side-left-1" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+        <svg class="flower-item violet v-side-left-2" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+        <svg class="flower-item violet v-side-right-1" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+        <svg class="flower-item violet v-side-right-2" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+
+        <!-- Bottom Floral Cluster -->
+        <svg class="flower-item violet v-bottom-left" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+        <svg class="flower-item bicolor-lily lily-bottom-left" viewBox="0 0 100 100"><use href="#symbol-bicolor-lily"/></svg>
+        <svg class="flower-item white-rose rose-bottom-center" viewBox="0 0 100 100"><use href="#symbol-white-rose"/></svg>
+        <svg class="flower-item white-lily lily-bottom-right" viewBox="0 0 100 100"><use href="#symbol-white-lily"/></svg>
+        <svg class="flower-item violet v-bottom-right" viewBox="0 0 80 80"><use href="#symbol-violet-flower"/></svg>
+      </div>
+
+      <!-- The Core Birthday Greeting Card -->
+      <article class="greeting-card">
+        
+        <!-- Card Inner Border / Golden Foil Trim -->
+        <div class="card-foil-border"></div>
+
+        <!-- Card Header with Subtle Floral Crest -->
+        <header class="card-header">
+          <div class="wreath-crest">
+            <span class="crest-line"></span>
+            <span class="crest-flower">🌸</span>
+            <span class="crest-line"></span>
+          </div>
+          <span class="sub-greeting">TO A TRULY REMARKABLE SOUL</span>
+          <h1 class="main-title">Wishing You the Best Birthday</h1>
+          <p class="title-subtext">And Many More Wonderful Years to Come</p>
+        </header>
+
+        <!-- Recipient Personalization Input (Optional inline edit) -->
+        <div class="recipient-badge-container">
+          <div class="recipient-badge" id="name-display" title="Click to personalize name">
+            <span class="for-label">Honoring:</span>
+            <span class="recipient-name" id="recipient-name-text" contenteditable="true" spellcheck="false" title="Click to edit name">An Exceptional Friend</span>
+            <span class="edit-hint">✎</span>
+          </div>
+        </div>
+
+        <!-- The Heartfelt Message Body -->
+        <div class="message-content">
+          <div class="quote-mark open">“</div>
+          
+          <p class="lead-statement">
+            I believe in you with every piece of conviction.
+          </p>
+
+          <p class="body-paragraph">
+            You are a great human being with a heart bigger than herself—someone who naturally radiates integrity, strength, and genuine grace to everyone around you.
+          </p>
+
+          <p class="body-paragraph emphasis">
+            Thank you for accepting me just as I am, and for standing steadfastly by my side in any and every situation. Knowing I can count on your unwavering presence is a gift beyond measure.
+          </p>
+
+          <p class="closing-wish">
+            On this special day, I wish you the very best birthday possible, and countless more beautiful years ahead filled with health, fulfillment, peace, and triumph.
+          </p>
+
+          <div class="quote-mark close">”</div>
+        </div>
+
+        <!-- Elegant Card Footer -->
+        <footer class="card-footer">
+          <div class="wax-seal" id="seal-button" title="Click to receive a birthday blessing">
+            <div class="seal-inner">
+              <span class="seal-emblem">✦</span>
+              <span class="seal-caption">HONOR</span>
+            </div>
+          </div>
+          <div class="signature-line">
+            <span class="sign-label">With profound respect and deepest gratitude,</span>
+            <span class="sign-note">Always standing in your corner</span>
+          </div>
+
+          <!-- Quick Share Box inside Card -->
+          <div class="card-share-box">
+            <button class="share-main-btn" onclick="document.getElementById('btn-share-link').click()">
+              <span>🔗</span> Copy Shareable Link
+            </button>
+          </div>
+        </footer>
+
+      </article>
+
+    </div>
+
+    <!-- Flower Legend & Botanical Meaning Section -->
+    <section class="botanical-meaning-card">
+      <h2 class="section-heading">The Botanical Symbolism of This Bouquet</h2>
+      <div class="meaning-grid">
+        
+        <div class="meaning-item">
+          <div class="flower-icon-wrap">
+            <svg viewBox="0 0 100 100" class="mini-icon"><use href="#symbol-white-rose"/></svg>
+          </div>
+          <div class="meaning-text">
+            <h3>White Roses</h3>
+            <p>Representing pure honor, respect, quiet dignity, and loyalty that endures across every season of life.</p>
+          </div>
+        </div>
+
+        <div class="meaning-item">
+          <div class="flower-icon-wrap">
+            <svg viewBox="0 0 100 100" class="mini-icon"><use href="#symbol-white-lily"/></svg>
+          </div>
+          <div class="meaning-text">
+            <h3>White Lilies</h3>
+            <p>Symbolizing nobility of character, resilience, and an open heart with genuine integrity.</p>
+          </div>
+        </div>
+
+        <div class="meaning-item">
+          <div class="flower-icon-wrap">
+            <svg viewBox="0 0 100 100" class="mini-icon"><use href="#symbol-bicolor-lily"/></svg>
+          </div>
+          <div class="meaning-text">
+            <h3>Violet & White Lilies</h3>
+            <p>Harmonizing pure grace with wisdom and inner depth—embodying someone whose greatness comes from within.</p>
+          </div>
+        </div>
+
+        <div class="meaning-item">
+          <div class="flower-icon-wrap">
+            <svg viewBox="0 0 80 80" class="mini-icon"><use href="#symbol-violet-flower"/></svg>
+          </div>
+          <div class="meaning-text">
+            <h3>Surrounding Violets</h3>
+            <p>Encircling every bloom to signify unwavering support, steadfast constancy, and faith in your journey.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Interactive Toast Notification -->
+  <div id="toast" class="toast">A shower of blessings and flowers has bloomed! 🌸</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
